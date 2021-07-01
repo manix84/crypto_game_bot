@@ -49,7 +49,7 @@ bot.on("message", (message: Discord.Message) => {
               .setDescription(level.reply)
               .setThumbnail(`https://${process.env.HOST}/images/logo.png`)
               .setTimestamp()
-              .setFooter("Crypto Bot", `https://${process.env.HOST}/images/logo_bordered.png`);
+              .setFooter("Crypto Bot", `https://${process.env.HOST}/images/logo.png`);
 
             message.author.send(embeddedSetupMessage);
             success(`${message.author.username} successfully guessed Level #${levelNumber} code.`);
