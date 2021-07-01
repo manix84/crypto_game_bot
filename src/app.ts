@@ -25,6 +25,12 @@ app.get("/",  (_request, response) => {
     .send();
 });
 
+app.get("/callback", (_request, response) => {
+  response
+    .status(200)
+    .send("Success!");
+});
+
 app.get("/invite", (_request, response) => {
   const oauth = new DiscordOauth2({
     clientId: process.env.DISCORD_CLIENT_ID,
@@ -35,7 +41,7 @@ app.get("/invite", (_request, response) => {
   const url: string = oauth.generateAuthUrl({
     scope: ["identify", "guilds", "bot"],
     state: nanoid(),
-    permissions: 67584
+    permissions: 224256
   });
 
   response
