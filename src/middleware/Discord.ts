@@ -2,9 +2,30 @@ import Discord from "discord.js";
 import { success, info, br } from "../utils/log";
 
 const bot = new Discord.Client();
-const SECRET_CODE = process.env.SECRET_CODE || "test";
-const SECRET_REPLY = process.env.SECRET_REPLY || "https://www.youtube.com/watch?v=6-HUgzYPm9g";
 const CHANNEL = process.env.DISCORD_CHANNEL || false;
+
+interface LevelsProps {
+  [index: number]: {
+    code: string;
+    reply: string;
+    color: string;
+    id: number;
+  }
+}
+
+const levelsList: number[] = [1, 2, 3, 4, 5];
+const levels: LevelsProps = {};
+
+levelsList.forEach(levelNumber => {
+  if (process.env[`LEVEL_${levelNumber}_CODE`] && process.env[`LEVEL_${levelNumber}_REPLY`] && process.env[`LEVEL_${levelNumber}_ID`]) {
+    levels[levelNumber] = {
+      code: process.env[`LEVEL_${levelNumber}_CODE`] || "",
+      reply: process.env[`LEVEL_${levelNumber}_REPLY`] || "",
+      color: process.env[`LEVEL_${levelNumber}_COLOR`] || "",
+      id: Number(process.env[`LEVEL_${levelNumber}_ID`]) || 0
+    };
+  }
+});
 
 bot.on("ready", () => {
   info(`Logged in as ${bot.user?.tag}!`);
@@ -17,19 +38,24 @@ bot.on("message", (message: Discord.Message) => {
     message.channel.send("pong!");
   }
 
-  if ((!CHANNEL || message.channel.id === CHANNEL) && message.content === SECRET_CODE) {
+  if ((message.channel.id === CHANNEL)) {
     message.delete();
-    success(`${message.author.username} successfully guessed the combination.`);
-    const embeddedSetupMessage = new Discord.MessageEmbed()
-      .setColor("#FFD700")
-      .setTitle("Cryptic Clue")
-      .setDescription(SECRET_REPLY)
-      .setThumbnail(`https://${process.env.HOST}/images/logo.png`)
-      .setTimestamp()
-      .setFooter("Crypto Bot", `https://${process.env.HOST}/images/logo_bordered.png`);
+    Object.entries(levels).forEach(([levelNumber, level]) => {
+      if (message.content === level.code) {
+        message.member?.roles.add(level.ID);
+        success(`${message.author.username} successfully guessed Level #${levelNumber} code.`);
+        const embeddedSetupMessage = new Discord.MessageEmbed()
+          .setColor(level.color)
+          .setTitle("Kryptische Hinweise")
+          .setDescription(level.reply)
+          .setThumbnail(`https://${process.env.HOST}/images/logo.png`)
+          .setTimestamp()
+          .setFooter("Crypto Bot", `https://${process.env.HOST}/images/logo_bordered.png`);
 
-    message.author.send(embeddedSetupMessage);
-    // message.channel.send("Check your private messages for setup instructions.");
+        message.author.send(embeddedSetupMessage);
+        // message.channel.send("Check your private messages for setup instructions.");
+      }
+    });
   }
 });
 
