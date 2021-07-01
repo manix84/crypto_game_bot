@@ -25,12 +25,6 @@ app.get("/",  (_request, response) => {
     .send();
 });
 
-app.get("/callback", (_request, response) => {
-  response
-    .status(200)
-    .send("Success!");
-});
-
 app.get("/invite", (_request, response) => {
   const oauth = new DiscordOauth2({
     clientId: process.env.DISCORD_CLIENT_ID,

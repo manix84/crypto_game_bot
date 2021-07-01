@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import { success, info, br } from "../utils/log";
+import { success, info, br, error } from "../utils/log";
 
 const bot = new Discord.Client();
 const CHANNEL = process.env.DISCORD_CHANNEL || false;
@@ -8,8 +8,7 @@ interface LevelsProps {
   [index: number]: {
     code: string;
     reply: string;
-    color: string;
-    id: number;
+    id: string;
   }
 }
 
@@ -21,8 +20,7 @@ levelsList.forEach(levelNumber => {
     levels[levelNumber] = {
       code: process.env[`LEVEL_${levelNumber}_CODE`] || "",
       reply: process.env[`LEVEL_${levelNumber}_REPLY`] || "",
-      color: process.env[`LEVEL_${levelNumber}_COLOR`] || "",
-      id: Number(process.env[`LEVEL_${levelNumber}_ID`]) || 0
+      id: process.env[`LEVEL_${levelNumber}_ID`] || "000000000000000000"
     };
   }
 });
@@ -38,25 +36,24 @@ bot.on("message", (message: Discord.Message) => {
     message.channel.send("pong!");
   }
 
-  if ((message.channel.id === CHANNEL)) {
-    message.delete();
+  if (!CHANNEL || message.channel.id === CHANNEL) {
     Object.entries(levels).forEach(([levelNumber, level]) => {
       if (message.content === level.code) {
-        const role = message.guild?.roles.cache.find(r => r.id === level.ID);
-        if (role) {
-          message.member?.roles.add(role);
-        }
-        success(`${message.author.username} successfully guessed Level #${levelNumber} code.`);
-        const embeddedSetupMessage = new Discord.MessageEmbed()
-          .setColor(level.color)
-          .setTitle("Kryptische Hinweise")
-          .setDescription(level.reply)
-          .setThumbnail(`https://${process.env.HOST}/images/logo.png`)
-          .setTimestamp()
-          .setFooter("Crypto Bot", `https://${process.env.HOST}/images/logo_bordered.png`);
+        message.guild?.roles.fetch(level.id)
+          .then(role => {
+            role && message.member?.roles?.add(role, `Unlocked level #${levelNumber} in Crypto Game.`);
 
-        message.author.send(embeddedSetupMessage);
-        // message.channel.send("Check your private messages for setup instructions.");
+            const embeddedSetupMessage = new Discord.MessageEmbed()
+              .setColor(role?.color || "gold")
+              .setTitle("Kryptische Hinweise")
+              .setDescription(level.reply)
+              .setThumbnail(`https://${process.env.HOST}/images/logo.png`)
+              .setTimestamp()
+              .setFooter("Crypto Bot", `https://${process.env.HOST}/images/logo_bordered.png`);
+
+            message.author.send(embeddedSetupMessage);
+            success(`${message.author.username} successfully guessed Level #${levelNumber} code.`);
+          }).catch(error);
       }
     });
   }
