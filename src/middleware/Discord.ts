@@ -38,7 +38,7 @@ bot.on("message", (message: Discord.Message) => {
 
   if (!CHANNEL || message.channel.id === CHANNEL) {
     Object.entries(levels).forEach(([levelNumber, level]) => {
-      if (message.content === level.code) {
+      if (message.content.toLowerCase() === level.code.toLowerCase()) {
         message.guild?.roles.fetch(level.id)
           .then(role => {
             role && message.member?.roles?.add(role, `Unlocked level #${levelNumber} in Crypto Game.`);
