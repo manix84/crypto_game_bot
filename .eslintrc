@@ -1,0 +1,20 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "rules": {
+    "semi":  ["error", "always"],
+    "quotes": ["error", "double", { "allowTemplateLiterals": true }],
+    "indent": ["error", 2, { "VariableDeclarator": "first", "MemberExpression": 1, "SwitchCase": 1, "ArrayExpression": 1, "ObjectExpression": 1, "ImportDeclaration": 1, "flatTernaryExpressions": false }],
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/type-annotation-spacing": ["error", { "before": false, "after": true }]
+  }
+}
