@@ -53,7 +53,11 @@ bot.on("message", (message: Discord.Message) => {
 
             message.author.send(embeddedSetupMessage);
             success(`${message.author.username} successfully guessed Level #${levelNumber} code.`);
-          }).catch(error);
+          })
+          .catch(error)
+          .finally(() => message && message.delete());
+      } else {
+        message && message.delete();
       }
     });
   }
