@@ -42,7 +42,10 @@ bot.on("message", (message: Discord.Message) => {
     message.delete();
     Object.entries(levels).forEach(([levelNumber, level]) => {
       if (message.content === level.code) {
-        message.member?.roles.add(level.ID);
+        const role = message.guild?.roles.cache.find(r => r.id === level.ID);
+        if (role) {
+          message.member?.roles.add(role);
+        }
         success(`${message.author.username} successfully guessed Level #${levelNumber} code.`);
         const embeddedSetupMessage = new Discord.MessageEmbed()
           .setColor(level.color)
