@@ -41,7 +41,7 @@ app.get("/invite", (_request, response) => {
   const url: string = oauth.generateAuthUrl({
     scope: ["identify", "guilds", "bot"],
     state: nanoid(),
-    permissions: 224256
+    permissions: 223232
   });
 
   response
