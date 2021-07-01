@@ -15,6 +15,7 @@ bot.on("message", (message: Discord.Message) => {
   }
 
   if (message.content === "1234") {
+    message.delete();
     success(`${message.author.username} successfully guessed the combination.`);
     const embeddedSetupMessage = new Discord.MessageEmbed()
       .setColor("#FFD700")
