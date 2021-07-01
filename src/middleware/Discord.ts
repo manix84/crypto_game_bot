@@ -4,6 +4,7 @@ import { success, info, br } from "../utils/log";
 const bot = new Discord.Client();
 const SECRET_CODE = process.env.SECRET_CODE || "test";
 const SECRET_REPLY = process.env.SECRET_REPLY || "https://www.youtube.com/watch?v=6-HUgzYPm9g";
+const CHANNEL = process.env.DISCORD_CHANNEL || false;
 
 bot.on("ready", () => {
   info(`Logged in as ${bot.user?.tag}!`);
@@ -16,7 +17,7 @@ bot.on("message", (message: Discord.Message) => {
     message.channel.send("pong!");
   }
 
-  if (message.content === SECRET_CODE) {
+  if ((!CHANNEL || message.channel.id === CHANNEL) && message.content === SECRET_CODE) {
     message.delete();
     success(`${message.author.username} successfully guessed the combination.`);
     const embeddedSetupMessage = new Discord.MessageEmbed()
