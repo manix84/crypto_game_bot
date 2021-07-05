@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 import Database from "./Database";
-import { success, info, br, error, warn } from "../utils/log";
+import { success, info, br, error } from "../utils/log";
 
 const db = new Database();
 const bot = new Discord.Client();
