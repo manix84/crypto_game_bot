@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 import Database from "./Database";
-import { success, info, br, error } from "../utils/log";
+import { success, info, br, error, warn } from "../utils/log";
 
 const db = new Database();
 const bot = new Discord.Client();
@@ -62,13 +62,13 @@ bot.on("message", (message: Discord.Message) => {
       currentUserLevel = level;
       if (!currentUserLevel) {
         currentUserLevel = 0;
-        db.setUserLevel(message.author.id, 0, (result) => {
-          if (result) {
-            success(`Setting initial level to 0, for ${message.author.username}.`);
-          } else {
-            error(`Something went wrong, and ${message.author.username} didn't save their level.`);
-          }
-        });
+        // db.setUserLevel(message.author.id, 0, (result) => {
+        //   if (result) {
+        //     success(`Setting initial level to 0, for ${message.author.username}.`);
+        //   } else {
+        //     error(`Something went wrong, and ${message.author.username} didn't save their level.`);
+        //   }
+        // });
       }
       console.log("getUserLevel:", level);
 
@@ -82,6 +82,9 @@ bot.on("message", (message: Discord.Message) => {
         } else {
           isInPreviousRole = false;
         }
+        info(`Level #${levelNumber}`);
+        info("  - isInPreviousRole", isInPreviousRole);
+        info("  - isCorrectLevelAnswer", isCorrectLevelAnswer);
         if (isCorrectLevelAnswer && isInPreviousRole) {
           success(`${message.author.username} successfully guessed Level #${levelNumber} code.`);
           db.setUserLevel(message.author.id, levelNumber, (result) => {
